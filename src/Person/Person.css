@@ -1,0 +1,12 @@
+/* .person {
+    margin: 30px auto;
+    width: 300px;
+    padding: 15px;
+    border: 1px solid black;
+}
+
+@media (min-width: 500px) {
+    .person {
+        width: 450px;
+    }
+} */
