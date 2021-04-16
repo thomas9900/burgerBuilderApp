@@ -1,108 +1,72 @@
 import React, { Component } from 'react';
-import './App.css';
-import Person from './Person/Person';
-import styled from 'styled-components';
+import Layout from './hoc/Layout/Layout';
+import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
+import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
+import Logout from './containers/Auth/Logout/Logout';
+import { connect } from 'react-redux';
+import * as actions from './store/actions/index';
+import asyncComponent from './hoc/asyncComponent/asyncComponent';
 
+const asyncCheckout = asyncComponent(() => {
+  return import('./containers/Checkout/Checkout')
+});
 
+const asyncOrders = asyncComponent(() => {
+  return import('./containers/Orders/Orders')
+}); 
+
+const asyncAuth = asyncComponent(() => {
+  return import('./containers/Auth/Auth')
+});
 
 class App extends Component {
-  state = {
-    persons: [
-      { id: 'asdf5', name: 'Max', age: 28 },
-      { id: '546yg', name: 'Manu', age: 29 },
-      { id: 'd4fg5', name: 'Stephanie', age: 26 }
-    ],
-    otherState: 'some other value',
-    showPersons: false
+  componentDidMount() {
+    this.props.onTryAutoSignup();
   }
 
-  nameChangedHandler = (event, id) => {
-    const personIndex = this.state.persons.findIndex(p => {
-      return p.id === id;
-    });
+  render() {
+    let routes = (
+      <Switch>
+        <Route path="/auth" component={asyncAuth} />
+        <Route path="/" exact component={BurgerBuilder} />
+        <Redirect to="/" />
+      </Switch>
+    );
 
-    const person = {
-      ...this.state.persons[personIndex]
-    };
-
-    // const person = Object.assign({}, this.state.persons[personIndex]);
-
-    person.name = event.target.value;
-
-    const persons = [...this.state.persons];
-    persons[personIndex] = person;
-
-    this.setState( {persons: persons} );
-  }
-
-  deletePersonHandler = (personIndex) => {
-    // const persons = this.state.persons.slice();
-    const persons = [...this.state.persons];
-    persons.splice(personIndex, 1);
-    this.setState({persons: persons});
-  }
-
-  togglePersonsHandler = () => {
-    const doesShow = this.state.showPersons;
-    this.setState({showPersons: !doesShow});
-  }
-
-  render () {
-    const style = {
-      backgroundColor: 'green',
-      color: 'white',
-      font: 'inherit',
-      border: '1px solid blue',
-      padding: '8px',
-      cursor: 'pointer',
-      ':hover': {
-        backgroundColor: 'lightgreen',
-        color: 'black'
-      }
-    };
-
-    let persons = null;
-
-    if (this.state.showPersons) {
-      persons = (
-        <div>
-          {this.state.persons.map((person, index) => {
-            return <Person 
-            click={() => this.deletePersonHandler(index)}
-            name={person.name} 
-            age={person.age}
-            key={person.id}
-            changed={(event) => this.nameChangedHandler(event, person.id)} />
-          })}
-        </div>
+    if (this.props.isAuthenticated) {
+      routes = (
+        <Switch>
+          <Route path="/checkout" component={asyncCheckout} />
+          <Route path="/orders" component={asyncOrders} />
+          <Route path="/logout" component={Logout} />
+          <Route path="/auth" component={asyncAuth} />
+          <Route path="/" exact component={BurgerBuilder} />
+          <Redirect to="/" />
+        </Switch>
       );
-
-      // style.backgroundColor = 'red';
-      // style[':hover'] = {
-      //   backgroundColor: 'salmon',
-      //   color: 'black'
-      // };
-    }
-
-    const classes = [];
-    if (this.state.persons.length <= 2) {
-      classes.push('red'); // classes = ['red']
-    }
-    if (this.state.persons.length <= 1) {
-      classes.push('bold'); // classes = ['red', 'bold']
     }
 
     return (
-        <div className="App">
-          <h1>Hi, I'm a React App</h1>
-          <p className={classes.join(' ')}>This is really working!</p>
-          <button className="button" onClick={this.togglePersonsHandler}>
-            toggle persons
-          </button>
-          {persons}
-        </div>
+      <div>
+        <Layout>
+            {routes}
+        </Layout>
+      </div>
+
     );
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    isAuthenticated: state.auth.token !== null
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onTryAutoSignup: () => dispatch(actions.authCheckState())
+  };
+};
+
+export default (connect(mapStateToProps, mapDispatchToProps)(App));
