@@ -1,5 +1,5 @@
 # React & Redux burger builder app
-## Has a login system with Firebase backend
+## Has a login system with Firebase & saving orders
 
 
 
