@@ -112,6 +112,7 @@ class Auth extends Component {
 
         return (
             <div className={styles.Auth}>
+                <h3>Please enter random email & pw to sign up/sign in</h3>
                 {authRedirect}
                 {errorMessage}
                 <form onSubmit={this.submitHandler}>

@@ -3,7 +3,6 @@ import styles from './Toolbar.module.css';
 import Logo from '../../Logo/Logo';
 import NavigationItems from '../NavigationItems/NavigationItems';
 import DrawerToggle from '../SideDrawer/DrawerToggle/DrawerToggle';
-import LanguageSelector from '../LanguageSelector/LanguageSelector';
 
 
 const toolbar = ( props ) => (
@@ -16,7 +15,6 @@ const toolbar = ( props ) => (
             <NavigationItems isAuthenticated={props.isAuth} />
             
         </nav>
-        <LanguageSelector />
     </header>
 );
 

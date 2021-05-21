@@ -13,11 +13,11 @@ const controls = [
 const buildControls = (props) => (
     <div className={styles.BuildControls}>
         <p>Current Price: <strong>{props.price.toFixed(2)}</strong></p>
-        <form onChange={props.seedChange}>
+        {/* <form onChange={props.seedChange}>
               <p style={{marginLeft: "36px"}}>Please select seeds:</p>
               <input type="radio" name="seeds" value="whiteSeeds" defaultChecked/> <label></label> White seeds
               <input type="radio" name="seeds" value="blackSeeds"  style={{marginLeft: "8px"}}/> Black seeds
-        </form>
+        </form> */}
         {controls.map(ctrl => (
             <BuildControl 
                 key={ctrl.label} 
